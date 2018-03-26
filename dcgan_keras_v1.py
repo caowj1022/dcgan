@@ -62,8 +62,8 @@ class DCGAN(object):
 
 	def generator(self):
 		h, w = self.output_shape[0], self.output_shape[1]
-		h2, w2 = h / 2, w / 2
-		h4, w4 = h2 / 2, w2 / 2
+		h2, w2 = int(h / 2), int(w / 2)
+		h4, w4 = int(h2 / 2), int(w2 / 2)
 		generator = Sequential()
 		generator.add(Dense(input_dim = self.z_dim, output_dim = 1024))
 		generator.add(Activation('tanh'))
