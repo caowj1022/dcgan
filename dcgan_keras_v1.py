@@ -8,6 +8,9 @@ from keras.datasets import mnist
 from keras.optimizers import SGD
 import matplotlib.pyplot as plt
 from PIL import Image
+import sys
+
+from keras.utils import plot_model
 
 def combine_images(images):
 	num_images = images.shape[0]
@@ -65,7 +68,7 @@ class DCGAN(object):
 		h2, w2 = int(h / 2), int(w / 2)
 		h4, w4 = int(h2 / 2), int(w2 / 2)
 		generator = Sequential()
-		generator.add(Dense(input_dim = self.z_dim, output_dim = 1024))
+		generator.add(Dense(input_dim = self.z_dim, units = 1024))
 		generator.add(Activation('tanh'))
 		generator.add(Dense(self.gf_dim*2 * h4 * w4))
 		generator.add(BatchNormalization())
@@ -80,17 +83,24 @@ class DCGAN(object):
 
 		return generator
 
+	def discriminate_generator(self, g, d):
+		d_g = Sequential()
+		d_g.add(g)
+		d.trainable = False
+		d_g.add(d)
+
+		return d_g
+
 	def build_model(self):
 
 		self.d = self.discriminator()
 		self.g = self.generator()
+		self.d_g = self.discriminate_generator(self.g, self.d)
 
-		d_g = Sequential()
-		d_g.add(self.g)
-		d_g.trainable = False
-		d_g.add(self.d)
-
-		self.d_g = d_g
+#		plot_model(self.d, to_file = 'discriminator.png', show_shapes = True)
+#		plot_model(self.g, to_file = 'generator.png', show_shapes = True)
+#		plot_model(self.d_g, to_file = 'discriminator(gen).png', show_shapes = True)
+#		sys.exit()
 
 	def train(self):
 		(X_trn, Y_trn), (X_tst, Y_tst) = mnist.load_data()
@@ -132,8 +142,8 @@ class DCGAN(object):
 
 
 def main():
-		dcgan = DCGAN()
-		dcgan.train()
+	dcgan = DCGAN()
+	dcgan.train()
 
 if __name__ == "__main__":
 	main()
