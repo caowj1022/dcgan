@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import sys
 
-from keras.utils import plot_model
+#from keras.utils import plot_model
 
 def combine_images(images):
 	num_images = images.shape[0]
@@ -112,9 +112,9 @@ class DCGAN(object):
 		self.g = self.generator()
 		self.d_g = self.discriminate_generator(self.g, self.d)
 
-		plot_model(self.d, to_file = 'discriminator.png', show_shapes = True)
-		plot_model(self.g, to_file = 'generator.png', show_shapes = True)
-		plot_model(self.d_g, to_file = 'discriminator(gen).png', show_shapes = True)
+#		plot_model(self.d, to_file = 'discriminator.png', show_shapes = True)
+#		plot_model(self.g, to_file = 'generator.png', show_shapes = True)
+#		plot_model(self.d_g, to_file = 'discriminator(gen).png', show_shapes = True)
 
 
 	def train(self):
@@ -148,7 +148,11 @@ class DCGAN(object):
 
 				z = np.random.uniform(-1, 1, size = (self.batch_size, 100))
 				self.d.trainable = False
+
+				# optimize generator twice
 				g_loss = self.d_g.train_on_batch(z, [1] * self.batch_size)
+				g_loss = self.d_g.train_on_batch(z, [1] * self.batch_size)
+				
 				self.d.trainable = True
 				print ("epoch [%d/%d] batch [%d/%d], d_loss: %.8f, g_loss: %.8f" % (epoch, self.epoch, index, num_batch, d_loss, g_loss))
 				if index % 10 == 9:
