@@ -193,7 +193,6 @@ class DCGAN(object):
 		self.d.trainable = True
 		self.d.compile(loss = 'binary_crossentropy', optimizer = d_optim)
 
-
 		for epoch in range(self.epoch):
 			num_batch = int(X_trn.shape[0]/self.batch_size)
 			bits_per_sample = 16
@@ -207,7 +206,7 @@ class DCGAN(object):
 				if index % 50 == 0:
 					fake_audio = fake_audio * maximum
 					for i in range(self.batch_size):
-						wavfile.write(str(epoch)+"_"+str(i)+".wav", fake_audio[i,:,:])
+						wavfile.write(str(epoch)+"_"+str(index)+"_"+str(i)+".wav", 44100, fake_audio[i,:,:].astype(np.int16))
 				X = np.concatenate((real_audio, fake_audio))
 				Y = [1] * self.batch_size + [0] * self.batch_size
 				d_loss = self.d.train_on_batch(X, Y)
